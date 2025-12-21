@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
+import MusicPlayer from "@/components/MusicPlayer";
 
 const images = [
     "/images/s1.png",
@@ -95,7 +96,7 @@ export default function WorkSession() {
             <div className="text-6xl md:text-8xl font-bold mb-8">
                 {minutesDisplay}:{secondsDisplay}
             </div>
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center space-y-6">
                 <Image
                     src={images[imgIdx]}
                     alt="fruit"
@@ -139,6 +140,11 @@ export default function WorkSession() {
                     )}
                 </div>
             )}
+            
+            {/* Music Player - Fixed at bottom right */}
+            <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 lg:bottom-8 lg:right-8 z-50">
+                <MusicPlayer />
+            </div>
         </div>
     );
 }

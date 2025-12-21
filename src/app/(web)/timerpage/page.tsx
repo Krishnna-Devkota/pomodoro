@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import gsap from "gsap";
+import MusicPlayer from "@/components/MusicPlayer";
 
 export default function TimerPage() {
   const [task, setTask] = useState("");
@@ -64,6 +65,11 @@ export default function TimerPage() {
       >
         START TIMER
       </button>
+      
+      {/* Music Player Section - Fixed at bottom right */}
+      <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 lg:bottom-8 lg:right-8 z-50">
+        <MusicPlayer />
+      </div>
     </div>
   );
 }
