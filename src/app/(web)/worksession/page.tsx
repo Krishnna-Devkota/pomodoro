@@ -38,6 +38,7 @@ export default function WorkSession() {
             setIsActive(false);
             setShowOptions(true);
             if (audioRef.current) {
+                audioRef.current.volume = 1.0; // Set volume to 100%
                 audioRef.current.currentTime = 0;
                 audioRef.current.play();
             }

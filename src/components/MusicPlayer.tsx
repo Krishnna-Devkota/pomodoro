@@ -17,7 +17,6 @@ interface JamendoResponse {
 }
 
 const fetchTracks = async (): Promise<JamendoTrack[]> => {
-  // Replace YOUR_CLIENT_ID with your actual Jamendo API client ID
   const CLIENT_ID = "5a2cd8bb";
   const response = await fetch(
     `https://api.jamendo.com/v3.0/tracks/?client_id=${CLIENT_ID}&format=json&limit=20&audioformat=mp32`
@@ -44,13 +43,28 @@ export default function MusicPlayer() {
 
   const currentTrack = tracks?.[currentTrackIndex];
 
+
   useEffect(() => {
-    if (audioRef.current && currentTrack) {
-      audioRef.current.src = currentTrack.audio;
-      if (isPlaying) {
-        audioRef.current.play();
+    const loadAndPlayTrack = async () => {
+      if (audioRef.current && currentTrack) {
+        // Pause current playback before changing source
+        audioRef.current.pause();
+        audioRef.current.src = currentTrack.audio;
+        
+        if (isPlaying) {
+          try {
+            await audioRef.current.play();
+          } catch (error) {
+            // Ignore AbortError when play is interrupted
+            if (error instanceof Error && error.name !== 'AbortError') {
+              console.error('Error playing audio:', error);
+            }
+          }
+        }
       }
-    }
+    };
+    
+    loadAndPlayTrack();
   }, [currentTrack, isPlaying]);
 
   // Update audio volume when volume state changes
@@ -60,14 +74,22 @@ export default function MusicPlayer() {
     }
   }, [volume]);
 
-  const handlePlayPause = () => {
+  const handlePlayPause = async () => {
     if (audioRef.current) {
       if (isPlaying) {
         audioRef.current.pause();
+        setIsPlaying(false);
       } else {
-        audioRef.current.play();
+        try {
+          await audioRef.current.play();
+          setIsPlaying(true);
+        } catch (error) {
+          // Ignore AbortError when play is interrupted
+          if (error instanceof Error && error.name !== 'AbortError') {
+            console.error('Error playing audio:', error);
+          }
+        }
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
