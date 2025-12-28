@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
@@ -12,10 +12,10 @@ const images = [
     "/images/s5.png",
 ];
 
-export default function WorkSession() {
+function WorkSessionPage() {
     const searchParams = useSearchParams();
     const task = searchParams.get("task") || "";
-    const [seconds, setSeconds] = useState(1 * 10);
+    const [seconds, setSeconds] = useState(60 * Number(process.env.NEXT_PUBLIC_WORK_MIN));
     const [isActive, setIsActive] = useState(true);
     const [imgIdx, setImgIdx] = useState(0);
     const [mode, setMode] = useState<"work" | "break">("work");
@@ -29,7 +29,7 @@ export default function WorkSession() {
         const interval = setInterval(() => {
             setSeconds((s) => s - 1);
         }, 1000);
-        return () => clearInterval(interval);
+        return () => clearInterval(interval);   
     }, [isActive, seconds]);
 
     useEffect(() => {
@@ -62,14 +62,14 @@ export default function WorkSession() {
     const handleStartBreak = () => {
         stopAudio();
         setMode("break");
-        setSeconds(1 * 5);
+        setSeconds(60 * Number(process.env.NEXT_PUBLIC_BREAK_MIN));
         setIsActive(true);
         setShowOptions(false);
     };
     const handleWorkAgain = () => {
         stopAudio();
         setMode("work");
-        setSeconds(1 * 10);
+        setSeconds(60 * Number(process.env.NEXT_PUBLIC_WORK_MIN));
         setIsActive(true);
         setShowOptions(false);
     };
@@ -140,5 +140,13 @@ export default function WorkSession() {
                 </div>
             )}
         </div>
+    );
+}
+
+export default function WorkSession() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <WorkSessionPage />
+        </Suspense>
     );
 }
