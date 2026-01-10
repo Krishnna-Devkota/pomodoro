@@ -1,47 +1,34 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-interface JamendoTrack {
+interface Track {
   id: string;
   name: string;
-  artist_name: string;
+  artist: string;
   audio: string;
-  image: string;
 }
 
-interface JamendoResponse {
-  results: JamendoTrack[];
-}
-
-const fetchTracks = async (): Promise<JamendoTrack[]> => {
-  const CLIENT_ID = "5a2cd8bb";
-  const response = await fetch(
-    `https://api.jamendo.com/v3.0/tracks/?client_id=${CLIENT_ID}&format=json&limit=20&audioformat=mp32`
-  );
-  
-  if (!response.ok) {
-    throw new Error("Failed to fetch tracks");
-  }
-  
-  const data: JamendoResponse = await response.json();
-  return data.results;
-};
+// Lofi Study Music tracks from samirpaulb/music
+const tracks: Track[] = [
+  { id: "1", name: "Lofi Study Music 1", artist: "Unknown", audio: "https://spcdn.pages.dev/music/music-1.mp3" },
+  { id: "2", name: "Lofi Study Music 2", artist: "Unknown", audio: "https://spcdn.pages.dev/music/music-2.mp3" },
+  { id: "3", name: "Lofi Study Music 3", artist: "Unknown", audio: "https://spcdn.pages.dev/music/music-3.mp3" },
+  { id: "4", name: "Lofi Study Music 4", artist: "Unknown", audio: "https://spcdn.pages.dev/music/music-4.mp3" },
+  { id: "5", name: "Lofi Study Music 5", artist: "Unknown", audio: "https://spcdn.pages.dev/music/music-5.mp3" },
+  { id: "6", name: "Lofi Study Music 6", artist: "Unknown", audio: "https://spcdn.pages.dev/music/music-6.mp3" },
+  { id: "7", name: "Lofi Study Music 7", artist: "Unknown", audio: "https://spcdn.pages.dev/music/music-7.mp3" },
+  { id: "8", name: "Lofi Study Music 8", artist: "Unknown", audio: "https://spcdn.pages.dev/music/music-8.mp3" },
+];
 
 export default function MusicPlayer() {
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState(50); // Volume state (0-100)
+  const [volume, setVolume] = useState(50);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const { data: tracks, isLoading, error } = useQuery({
-    queryKey: ["jamendo-tracks"],
-    queryFn: fetchTracks,
-  });
-
-  const currentTrack = tracks?.[currentTrackIndex];
+  const currentTrack = tracks[currentTrackIndex];
 
 
   useEffect(() => {
@@ -94,19 +81,15 @@ export default function MusicPlayer() {
   };
 
   const handlePrevious = () => {
-    if (tracks && tracks.length > 0) {
-      setCurrentTrackIndex((prev) => 
-        prev === 0 ? tracks.length - 1 : prev - 1
-      );
-    }
+    setCurrentTrackIndex((prev) => 
+      prev === 0 ? tracks.length - 1 : prev - 1
+    );
   };
 
   const handleNext = () => {
-    if (tracks && tracks.length > 0) {
-      setCurrentTrackIndex((prev) => 
-        prev === tracks.length - 1 ? 0 : prev + 1
-      );
-    }
+    setCurrentTrackIndex((prev) => 
+      prev === tracks.length - 1 ? 0 : prev + 1
+    );
   };
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -125,29 +108,7 @@ export default function MusicPlayer() {
 
     audio.addEventListener("ended", handleEnded);
     return () => audio.removeEventListener("ended", handleEnded);
-  }, [currentTrackIndex, tracks]);
-
-  if (isLoading) {
-    return (
-      <div className="  w-full max-w-md">
-        <p className="text-white text-center">Loading music...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="w-full max-w-md">
-        <p className="text-red-300 text-center text-sm">
-          Failed to load music. Please check your API key.
-        </p>
-      </div>
-    );
-  }
-
-  if (!currentTrack) {
-    return null;
-  }
+  }, [currentTrackIndex]);
 
   return (
     <div className="w-full max-w-md">
@@ -159,7 +120,7 @@ export default function MusicPlayer() {
           {currentTrack.name}
         </h3>
         <p className="text-white/70 text-sm truncate">
-          {currentTrack.artist_name}
+          {currentTrack.artist}
         </p>
       </div>
 
@@ -199,7 +160,7 @@ export default function MusicPlayer() {
 
       {/* Track Counter */}
       <div className="text-center mt-3 text-white/60 text-xs">
-        {currentTrackIndex + 1} / {tracks?.length || 0}
+        {currentTrackIndex + 1} / {tracks.length}
       </div>
 
       {/* Volume Control */}
