@@ -38,7 +38,7 @@ function WorkSessionPage() {
             setIsActive(false);
             setShowOptions(true);
             if (audioRef.current) {
-                audioRef.current.volume = 1.0; // Set volume to 100%
+                audioRef.current.volume = 1.0;
                 audioRef.current.currentTime = 0;
                 audioRef.current.play();
             }
@@ -142,7 +142,7 @@ function WorkSessionPage() {
                 </div>
             )}
             
-            {/* Music Player - Fixed at bottom right */}
+
             <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 lg:bottom-8 lg:right-8 z-50 -mt-12 md:mt-0">
                 <MusicPlayer />
             </div>

@@ -34,7 +34,6 @@ export default function MusicPlayer() {
   useEffect(() => {
     const loadAndPlayTrack = async () => {
       if (audioRef.current && currentTrack) {
-        // Pause current playback before changing source
         audioRef.current.pause();
         audioRef.current.src = currentTrack.audio;
         
@@ -42,7 +41,6 @@ export default function MusicPlayer() {
           try {
             await audioRef.current.play();
           } catch (error) {
-            // Ignore AbortError when play is interrupted
             if (error instanceof Error && error.name !== 'AbortError') {
               console.error('Error playing audio:', error);
             }
@@ -54,7 +52,6 @@ export default function MusicPlayer() {
     loadAndPlayTrack();
   }, [currentTrack, isPlaying]);
 
-  // Update audio volume when volume state changes
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = volume / 100;
